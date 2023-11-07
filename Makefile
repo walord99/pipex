@@ -6,7 +6,7 @@ OBJ 			= 	$(addprefix $(OBJ_DIR)/, $(FILES:.c=.o))
 CC				 = gcc
 
 NAME			= 	pipex
-HEADER_DIR		= 	hfiles
+HEADER_DIR		= 	include
 LIBFT_DIR 		= 	libft
 LIBFT			= 	$(LIBFT_DIR)/libft.a
 
