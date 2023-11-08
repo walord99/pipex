@@ -21,7 +21,7 @@ $(NAME): $(LIBFT) $(OBJ_DIR) $(OBJ)
 	$(CC) $(OBJ) -L$(LIBFT_DIR) -lft -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CC_DEBUG) -O1 $(INCLUDES) $(ERROR_FLAGS) -c $< -o $@ -g
+	$(CC) $(CC_DEBUG) $(INCLUDES) $(ERROR_FLAGS) -c $< -o $@ -g
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
