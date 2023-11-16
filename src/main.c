@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:01:17 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/16 00:01:01 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/16 15:51:03 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,8 @@ int	dup_close_pipes(t_pipe_pair *pipe_pair)
 		return (-1);
 	if (dup2(pipe_pair->write[1], 1) == -1)
 		return (-1);
-	if (close(pipe_pair->read[0]) == -1)
-		return (-1);
-	if (close(pipe_pair->write[1]) == -1)
-		return (-1);
+	close(pipe_pair->read[0]);
+	close(pipe_pair->write[1];
 	return (0);
 }
 
