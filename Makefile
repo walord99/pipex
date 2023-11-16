@@ -13,7 +13,7 @@ LIBFT			= 	$(LIBFT_DIR)/libft.a
 INCLUDES		= 	-I$(HEADER_DIR) -I$(LIBFT_DIR)
 #CC_DEBUG 		= 	-fsanitize=address -fno-omit-frame-pointer
 #L_DEBUG		=	-lasan
-#ERROR_FLAGS 	= 	-Wall -Werror -Wextra
+ERROR_FLAGS 	= 	-Wall -Werror -Wextra
 
 all: $(NAME)
 
@@ -39,6 +39,6 @@ fclean: clean
 re: clean all
 
 valgrind:
-	valgrind --leak-check=full ./so_long maps/test.ber
+	valgrind --track-fds=yes --trace-children=yes --leak-check=full ./pipex in_test "grep re" "grep er" out_test
 
 .PHONY: all, clean, fclean, re

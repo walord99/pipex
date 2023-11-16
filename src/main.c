@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:01:17 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/15 16:40:21 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/16 00:01:01 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair)
 		close(pipe_pair->write[1]);
 		return (parent(pid));
 	}
+	return (1);
 }
 
 int	check_file(char *file, int io)
@@ -209,7 +210,8 @@ int	run(char **argv, int io_files[2], char **env)
 		ft_printf_fd("pipex: pipe: %s\n", 2, strerror(errno));
 		return (-1);
 	}
-	pipe_pair = create_pipe_pair(io_files[0], -1, fd_pipe[0], fd_pipe[1]);
+	pipe_pair = create_pipe_pair(io_files[0], io_files[1], fd_pipe[0],
+			fd_pipe[1]);
 	status = create_children(argv[0], env, pipe_pair);
 	if (status != 0)
 	{
@@ -219,7 +221,8 @@ int	run(char **argv, int io_files[2], char **env)
 		return (status);
 	}
 	free(pipe_pair);
-	pipe_pair = create_pipe_pair(fd_pipe[0], fd_pipe[1], -1, io_files[1]);
+	pipe_pair = create_pipe_pair(fd_pipe[0], fd_pipe[1], io_files[0],
+			io_files[1]);
 	status = create_children(argv[1], env, pipe_pair);
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
@@ -231,14 +234,20 @@ int	main(int argc, char **argv, char **env)
 {
 	int	io_files[2];
 	int	status;
+
 	if (argc != 5)
-	ft_printf_fd("pipex: usage <in_file> \"<command>\" \"<command>\" <out_file>\n" ,2);
-		return -1;
+	{
+		ft_printf_fd(
+			"pipex: usage <in_file> \"<command>\" \"<command>\" <out_file>\n",
+			2);
+		return (1);
+	}
 	if (check_io_files(argv[1], argv[argc - 1], io_files) == 0)
 	{
 		status = run(&argv[2], io_files, env);
+		close(io_files[1]);
+		close(io_files[0]);
 		return (status);
-		// close io files;
 	}
 	return (1);
 }
