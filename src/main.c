@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:01:17 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/19 17:28:09 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/19 17:41:36 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef struct s_pipe_pair
 
 static int	check_exec(char **exec, char **env);
 
-int	dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close)
+int	dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close[2])
 {
 	if (pipe_pair->read[1] != -1)
 	{
@@ -40,12 +40,16 @@ int	dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close)
 		return (-1);
 	close(pipe_pair->read[0]);
 	close(pipe_pair->write[1]);
-	if (extra_close != -1)
-		close(extra_close);
+	if (extra_close)
+	{
+		close(extra_close[1]);
+		close(extra_close[0]);
+	}
 	return (0);
 }
 
-void	children(char **exec, char **env, t_pipe_pair *pipe_pair, int extra_close)
+void	children(char **exec, char **env, t_pipe_pair *pipe_pair,
+		int extra_close[2])
 {
 	if (dup_close_pipes(pipe_pair, extra_close) == -1)
 	{
@@ -67,7 +71,8 @@ int	parent(pid_t pid)
 	return (status / 256);
 }
 
-int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair, int extra_close)
+int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
+		int extra_close[2])
 {
 	pid_t	pid;
 	char	**split;
@@ -212,7 +217,7 @@ int	run(char **argv, int io_files[2], char **env)
 	}
 	pipe_pair = create_pipe_pair(io_files[0], io_files[1], fd_pipe[0],
 			fd_pipe[1]);
-	status = create_children(argv[0], env, pipe_pair, -1);
+	status = create_children(argv[0], env, pipe_pair, NULL);
 	if (status != 0)
 	{
 		close(fd_pipe[0]);
@@ -223,7 +228,7 @@ int	run(char **argv, int io_files[2], char **env)
 	free(pipe_pair);
 	pipe_pair = create_pipe_pair(fd_pipe[0], fd_pipe[1], io_files[0],
 			io_files[1]);
-	status = create_children(argv[1], env, pipe_pair, -1);
+	status = create_children(argv[1], env, pipe_pair, NULL);
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
 	free(pipe_pair);
@@ -237,8 +242,7 @@ int	main(int argc, char **argv, char **env)
 
 	if (argc != 5)
 	{
-		ft_printf_fd(
-			"pipex: usage <in_file> \"<command>\" \"<command>\" <out_file>\n",
+		ft_printf_fd("pipex: usage <in_file> \"<command>\" \"<command>\" <out_file>\n",
 			2);
 		return (1);
 	}
