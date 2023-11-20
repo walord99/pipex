@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:01:17 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/19 17:41:36 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/20 02:15:10 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ typedef struct s_pipe_pair
 	int		write[2];
 }			t_pipe_pair;
 
+static int	run(char **argv, int io_files[2], char **env);
 static int	check_exec(char **exec, char **env);
 
 int	dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close[2])
@@ -71,6 +72,7 @@ int	parent(pid_t pid)
 	return (status / 256);
 }
 
+
 int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
 		int extra_close[2])
 {
@@ -82,6 +84,7 @@ int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
 		ft_printf_fd("pipex: failed to fork: %s\n", 2, strerror(errno));
 	else if (pid == 0)
 	{
+		sleep(8);
 		split = ft_split(exec, ' ');
 		if (check_exec(split, env) == 0)
 			children(split, env, pipe_pair, extra_close);
@@ -204,35 +207,11 @@ t_pipe_pair	*create_pipe_pair(int read0, int read1, int write0, int write1)
 	return (pp);
 }
 
-int	run(char **argv, int io_files[2], char **env)
+void	close_and_free(int fd_pipe[2], t_pipe_pair *pipe_paire)
 {
-	t_pipe_pair	*pipe_pair;
-	int			fd_pipe[2];
-	int			status;
-
-	if (pipe(fd_pipe) != 0)
-	{
-		ft_printf_fd("pipex: pipe: %s\n", 2, strerror(errno));
-		return (-1);
-	}
-	pipe_pair = create_pipe_pair(io_files[0], io_files[1], fd_pipe[0],
-			fd_pipe[1]);
-	status = create_children(argv[0], env, pipe_pair, NULL);
-	if (status != 0)
-	{
-		close(fd_pipe[0]);
-		close(fd_pipe[1]);
-		free(pipe_pair);
-		return (status);
-	}
-	free(pipe_pair);
-	pipe_pair = create_pipe_pair(fd_pipe[0], fd_pipe[1], io_files[0],
-			io_files[1]);
-	status = create_children(argv[1], env, pipe_pair, NULL);
+	free(pipe_paire);
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
-	free(pipe_pair);
-	return (status);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -254,4 +233,31 @@ int	main(int argc, char **argv, char **env)
 		return (status);
 	}
 	return (1);
+}
+
+int	run(char **argv, int io_files[2], char **env)
+{
+	t_pipe_pair	*pipe_pair;
+	int			fd_pipe[2];
+	int			status;
+
+	if (pipe(fd_pipe) != 0)
+	{
+		ft_printf_fd("pipex: pipe: %s\n", 2, strerror(errno));
+		return (-1);
+	}
+	pipe_pair = create_pipe_pair(io_files[0], io_files[1], fd_pipe[0],
+			fd_pipe[1]);
+	status = create_children(argv[0], env, pipe_pair, NULL);
+	if (status != 0)
+	{
+		close_and_free(fd_pipe, pipe_pair);
+		return (status);
+	}
+	free(pipe_pair);
+	pipe_pair = create_pipe_pair(fd_pipe[0], fd_pipe[1], io_files[0],
+			io_files[1]);
+	status = create_children(argv[1], env, pipe_pair, NULL);
+	close_and_free(fd_pipe, pipe_pair);
+	return (status);
 }

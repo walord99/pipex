@@ -41,4 +41,7 @@ re: clean all
 valgrind:
 	valgrind --track-fds=yes --trace-children=yes --leak-check=full ./pipex in_test "grep re" "grep er" out_test
 
-.PHONY: all, clean, fclean, re
+test:
+	gcc $(INCLUDES) test.c src/split_args.c -L$(LIBFT_DIR) -lft -g -o test
+
+.PHONY: all, clean, fclean, re, test
