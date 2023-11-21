@@ -1,5 +1,8 @@
 FILES			= 	main.c \
-					split_args.c
+					split_args/split_args.c \
+					split_args/split_args_finders.c \
+					fd_handling.c \
+					exec_check.c
 SRC_DIR			= 	src
 OBJ_DIR			= 	obj
 SRC				= 	$(addprefix src/, $(FILES))
@@ -26,6 +29,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)/split_args
 
 $(LIBFT):
 	make -C libft

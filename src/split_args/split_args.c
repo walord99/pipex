@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 02:15:04 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/21 08:20:32 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/21 09:01:55 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,70 +41,6 @@ void	do_the_thing(char c, bool is_escaped, char *current_lit)
 		*current_lit = c;
 }
 
-int	get_arg_len(char *str)
-{
-	int		i;
-	bool	is_escaped;
-	char	current_lit;
-	int		len;
-
-	is_escaped = false;
-	current_lit = 0;
-	len = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\\' && is_escaped == false)
-			is_escaped = true;
-		else if (is_arg_ended(str[i], is_escaped, current_lit) == 0)
-		{
-			do_the_thing(str[i], is_escaped, &current_lit);
-			if (is_char_real(str[i], is_escaped, current_lit))
-				len++;
-			is_escaped = false;
-		}
-		else
-			return (len);
-		i++;
-	}
-	return (len);
-}
-
-char	*find_arg_end(char *str)
-{
-	int		i;
-	bool	is_escaped;
-	char	current_lit;
-
-	is_escaped = false;
-	current_lit = 0;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\\' && is_escaped == false)
-			is_escaped = true;
-		else if (is_arg_ended(str[i], is_escaped, current_lit) == 0)
-		{
-			do_the_thing(str[i], is_escaped, &current_lit);
-			is_escaped = false;
-		}
-		else
-			return (&str[i]);
-		i++;
-	}
-	return (&str[i]);
-}
-
-char	*skip_spaces(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i] == ' ')
-		i++;
-	return (str + i);
-}
-
 void	cpytrim_litterals(char *src, char *dest)
 {
 	int		i;
@@ -137,7 +73,7 @@ void	cpytrim_litterals(char *src, char *dest)
 char	**split_args(char *args)
 {
 	t_list	*split;
-	char **split_tab;
+	char	**split_tab;
 
 	if (!args)
 		return (NULL);
