@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:01:17 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/21 01:37:38 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/21 08:32:17 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void	children(char **exec, char **env, t_pipe_pair *pipe_pair,
 	{
 		execve(exec[0], exec, env);
 		ft_printf_fd("pipex: %s: %s\n", 2, strerror(errno), exec[0]);
-		ft_printf_fd("%s: %i\n", 2, __FILE__, __LINE__ - 1);
 	}
 }
 
@@ -84,7 +83,7 @@ int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
 		ft_printf_fd("pipex: failed to fork: %s\n", 2, strerror(errno));
 	else if (pid == 0)
 	{
-		split = ft_split(exec, ' ');
+		split = split_args(exec);
 		if (check_exec(split, env) == 0)
 			children(split, env, pipe_pair, extra_close);
 		free_tab((void **)split, &free);

@@ -1,4 +1,5 @@
-FILES			= 	main.c
+FILES			= 	main.c \
+					split_args.c
 SRC_DIR			= 	src
 OBJ_DIR			= 	obj
 SRC				= 	$(addprefix src/, $(FILES))
