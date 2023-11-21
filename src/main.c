@@ -6,95 +6,111 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:49:27 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/08 13:58:51 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/21 09:08:30 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-/*
-int	main(int argc, char **argv)
+static int	run(char **argv, int io_files[2], char **env);
+static int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
+				int extra_close[2]);
+static int	parent(pid_t pid);
+static void	children(char **exec, char **env, t_pipe_pair *pipe_pair,
+				int extra_close[2]);
+
+int	main(int argc, char **argv, char **env)
+{
+	int	io_files[2];
+	int	status;
+
+	if (argc != 5)
+	{
+		ft_printf_fd(
+			"pipex: usage <in_file> \"<command>\" \"<command>\" <out_file>\n",
+			2);
+		return (1);
+	}
+	if (check_io_files(argv[1], argv[argc - 1], io_files) == 0)
+	{
+		status = run(&argv[2], io_files, env);
+		close(io_files[1]);
+		close(io_files[0]);
+		return (status);
+	}
+	return (1);
+}
+
+int	run(char **argv, int io_files[2], char **env)
+{
+	t_pipe_pair	*pipe_pair;
+	int			fd_pipe[2];
+	int			status;
+
+	if (pipe(fd_pipe) != 0)
+	{
+		ft_printf_fd("pipex: pipe: %s\n", 2, strerror(errno));
+		return (-1);
+	}
+	pipe_pair = create_pipe_pair(io_files[0], io_files[1], fd_pipe[0],
+			fd_pipe[1]);
+	status = create_children(argv[0], env, pipe_pair, NULL);
+	if (status != 0)
+	{
+		close_and_free(fd_pipe, pipe_pair);
+		return (status);
+	}
+	free(pipe_pair);
+	pipe_pair = create_pipe_pair(fd_pipe[0], fd_pipe[1], io_files[0],
+			io_files[1]);
+	status = create_children(argv[1], env, pipe_pair, NULL);
+	close_and_free(fd_pipe, pipe_pair);
+	return (status);
+}
+
+int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
+		int extra_close[2])
 {
 	pid_t	pid;
-		char *t[] = {NULL};
-		char *test[] = {"/usr/bin/grep", "-R", "src", "src", NULL};
-		int status;
-	int		exit_status;
+	char	**split;
 
 	pid = fork();
 	if (pid < 0)
-		perror("Failed to fork.");
-	else if (pid == 0)1
+		ft_printf_fd("pipex: failed to fork: %s\n", 2, strerror(errno));
+	else if (pid == 0)
 	{
-		execve(test[0], test, t);
+		split = split_args(exec);
+		if (check_exec(split, env) == 0)
+			children(split, env, pipe_pair, extra_close);
+		free_tab((void **)split, &free);
+		exit(1);
 	}
 	else
 	{
-		waitpid(pid, &status, 0);
-		if (WEXITSTATUS(status))
-		{
-			exit_status = WEXITSTATUS(status);
-			printf("Parent: Process ID %ld Exit status of the child was %d\n",
-				(long)getpid, exit_status);
-		}
+		close(pipe_pair->write[1]);
+		return (parent(pid));
 	}
-	return (0);
+	return (1);
 }
-*/
 
-int	main(int argc, char **argv)
+void	children(char **exec, char **env, t_pipe_pair *pipe_pair,
+		int extra_close[2])
 {
-	char	*file;
-	int		fd_in;
-	int		fd_out;
-	int		fd_pipe1[2];
-	int		fd_pipe2[2];
-	int		loops;
-	char	**call;
-	pid_t	pid;
-	int		status;
-
-	file = argv[1];
-	fd_in = open(file, O_RDONLY);
-	file = argv[4];
-	fd_out = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	pipe(fd_pipe2);
-	pipe(fd_pipe1);
-	dup2(fd_in, 0);
-	loops = argc - 3;
-	while (loops--)
+	if (dup_close_pipes(pipe_pair, extra_close) == -1)
 	{
-		if (loops % 2 == 1)
-		{
-			if (loops != argc - 4)
-				dup2(fd_pipe2[0], 0);
-			if (loops == 0)
-				dup2(fd_out, 1);
-			else
-				dup2(fd_pipe1[1], 1);
-		}
-		else
-		{
-			if (loops != argc - 4)
-				dup2(fd_pipe1[0], 0);
-			if (loops == 0)
-				dup2(fd_out, 1);
-			else
-			 	dup2(fd_pipe2[1], 1);
-		}
-		call = ft_split(argv[argc - 2 - loops], ' ');
-		pid = fork();
-		if (pid < 0)
-			perror("Failed to fork");
-		else if (pid == 0)
-		{
-			call[0] = ft_strjoin("/usr/bin/", call[0]);
-			execve(call[0], call, NULL);
-		}
-		else
-		{
-			// free split
-			waitpid(-1, &status, 0);
-		}
+		ft_printf_fd("pipex: piping error: %s\n", 2, strerror(errno));
 	}
+	else
+	{
+		execve(exec[0], exec, env);
+		ft_printf_fd("pipex: %s: %s\n", 2, strerror(errno), exec[0]);
+	}
+}
+
+int	parent(pid_t pid)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	return (status / 256);
 }

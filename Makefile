@@ -1,4 +1,8 @@
-FILES			= 	main.c
+FILES			= 	main.c \
+					split_args/split_args.c \
+					split_args/split_args_finders.c \
+					fd_handling.c \
+					exec_check.c
 SRC_DIR			= 	src
 OBJ_DIR			= 	obj
 SRC				= 	$(addprefix src/, $(FILES))
@@ -13,7 +17,7 @@ LIBFT			= 	$(LIBFT_DIR)/libft.a
 INCLUDES		= 	-I$(HEADER_DIR) -I$(LIBFT_DIR)
 #CC_DEBUG 		= 	-fsanitize=address -fno-omit-frame-pointer
 #L_DEBUG		=	-lasan
-#ERROR_FLAGS 	= 	-Wall -Werror -Wextra
+ERROR_FLAGS 	= 	-Wall -Werror -Wextra
 
 all: $(NAME)
 
@@ -25,6 +29,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)/split_args
 
 $(LIBFT):
 	make -C libft
@@ -35,11 +40,13 @@ clean:
 
 fclean: clean
 	make -C $(LIBFT_DIR) fclean
-	make -C $(MLX_BUILD_DIR) clean
 
 re: clean all
 
 valgrind:
-	valgrind --leak-check=full ./so_long maps/test.ber
+	valgrind --track-fds=yes --trace-children=yes --leak-check=full ./pipex in_test "grep re" "grep er" out_test
 
-.PHONY: all, clean, fclean, re
+test:
+	gcc $(INCLUDES) test.c src/split_args.c -L$(LIBFT_DIR) -lft -g -o test
+
+.PHONY: all, clean, fclean, re, test
