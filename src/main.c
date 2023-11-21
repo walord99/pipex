@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:01:17 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/20 02:15:10 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/21 01:37:38 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
 		ft_printf_fd("pipex: failed to fork: %s\n", 2, strerror(errno));
 	else if (pid == 0)
 	{
-		sleep(8);
 		split = ft_split(exec, ' ');
 		if (check_exec(split, env) == 0)
 			children(split, env, pipe_pair, extra_close);

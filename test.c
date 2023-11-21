@@ -1,6 +1,9 @@
 int	get_arg_len(char *str);
+char	*find_arg_end(char *str);
+#include "pipex.h"
+t_list	*split_args(char *args);
 
 int main()
 {
-    get_arg_len("\\ \'wer\'\\   test");
+    t_list *args = split_args("echo 'wer ' \\\"fuck");
 }
