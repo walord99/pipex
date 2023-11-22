@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:49:27 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/21 09:08:30 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/22 15:48:11 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ int	create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
 		if (check_exec(split, env) == 0)
 			children(split, env, pipe_pair, extra_close);
 		free_tab((void **)split, &free);
+		close_pipes(pipe_pair->read, pipe_pair->write);
+		free(pipe_pair);
 		exit(1);
 	}
 	else

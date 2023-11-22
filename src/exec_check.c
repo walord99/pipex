@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 08:45:48 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/21 08:52:42 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/22 15:47:39 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,27 @@ int	check_exec(char **exec, char **env)
 {
 	char	*ptr;
 
+	ptr = NULL;
 	if (!exec)
 		return (1);
 	if (!ft_strchr(exec[0], '/'))
 	{
 		ptr = exec[0];
 		exec[0] = get_path(env, exec);
-		free(ptr);
 	}
 	if (exec[0] && access(exec[0], X_OK) != 0)
 	{
+		free(ptr);
 		ft_printf_fd("pipex: %s: %s\n", 2, strerror(errno), exec[0]);
-		return (-11);
+		return (-1);
 	}
 	else if (!exec[0])
 	{
-		ft_printf_fd("pipex: command not found: %s\n", 2, exec[0]);
+		ft_printf_fd("pipex: command not found: %s\n", 2, ptr);
+		free(ptr);
 		return (-1);
 	}
+	free(ptr);
 	return (0);
 }
 
@@ -60,4 +63,15 @@ char	*get_path(char **env, char **exec)
 	}
 	free_tab((void **)paths, &free);
 	return (NULL);
+}
+
+void	close_pipes(int fd_pipe[2], int fd[2])
+{
+	if (fd)
+	{
+		close(fd[1]);
+		close(fd[0]);
+	}
+	close(fd_pipe[0]);
+	close(fd_pipe[1]);
 }
