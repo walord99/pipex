@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 17:45:32 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/22 13:05:11 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/25 11:27:11 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ int	check_file(char *file, int io)
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (io == OUT_APPEND)
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else 
+		fd = -1;
 	if (fd == -1)
 	{
 		ft_printf_fd("pipex: %s: %s\n", 2, strerror(errno), file);
