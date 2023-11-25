@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:57:14 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/22 15:23:31 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/25 13:56:43 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,6 @@ void		switch_close_pipes(int fd1[2], int fd2[2]);
 int			parent(pid_t pid);
 void		children(char **exec, char **env, t_pipe_pair *pipe_pair,
 				int extra_close[2]);
+int			null_error(char **args);
 
 #endif

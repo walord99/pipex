@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 08:45:48 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/22 15:38:06 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/25 13:57:41 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	check_exec(char **exec, char **env)
 	char	*ptr;
 
 	ptr = NULL;
-	if (!exec)
-		return (1);
+	if (null_error(exec))
+		return (-1);
 	if (!ft_strchr(exec[0], '/'))
 	{
 		ptr = exec[0];
@@ -63,4 +63,14 @@ char	*get_path(char **env, char **exec)
 	}
 	free_tab((void **)paths, &free);
 	return (NULL);
+}
+
+int	null_error(char **args)
+{
+	if (!args)
+	{
+		ft_printf_fd("pipex: permission denied: \n", 2);
+		return (-1);
+	}
+	return (0);
 }

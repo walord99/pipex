@@ -64,7 +64,7 @@ fclean: clean
 re: clean all
 
 valgrind:
-	valgrind --track-fds=yes --trace-children=yes --leak-check=full ./pipex in_test "grep re" "grep er" out_test
+	valgrind --track-fds=yes --trace-children=yes --leak-check=full --show-leak-kinds=all ./pipex in_test "" "grep er" out_test
 
 test:
 	gcc $(INCLUDES) test.c src/split_args.c -L$(LIBFT_DIR) -lft -g -o test

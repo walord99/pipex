@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:57:14 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/22 15:47:33 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/25 13:56:31 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,6 @@ bool		is_char_real(char c, bool is_escaped, char current_lit);
 bool		is_arg_ended(char c, bool is_escaped, char current_lit);
 void		do_the_thing(char c, bool is_escaped, char *current_lit);
 void		close_pipes(int fd_pipe[2], int fd[2]);
+int			null_error(char **args);
 
 #endif
