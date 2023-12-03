@@ -6,13 +6,13 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 17:45:32 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/25 11:26:32 by bplante          ###   ########.fr       */
+/*   Updated: 2023/12/03 17:28:20 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	check_file(char *file, int io);
+int			check_file(char *file, int io);
 
 int	dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close[2])
 {
@@ -48,7 +48,7 @@ int	check_file(char *file, int io)
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (io == OUT_APPEND)
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else 
+	else
 		fd = -1;
 	if (fd == -1)
 	{
