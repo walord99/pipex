@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:57:14 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/25 13:56:31 by bplante          ###   ########.fr       */
+/*   Updated: 2023/11/25 13:56:43 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include <errno.h>
 # include <fcntl.h>
@@ -37,7 +37,6 @@ char		*get_path(char **env, char **exec);
 int			dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close[2]);
 int			check_io_files(char *in, char *out, int fd[2]);
 t_pipe_pair	*create_pipe_pair(int read0, int read1, int write0, int write1);
-void		close_and_free(int fd_pipe[2], t_pipe_pair *pipe_paire);
 int			check_exec(char **exec, char **env);
 char		*find_arg_end(char *str);
 char		*skip_spaces(char *str);
@@ -45,7 +44,15 @@ int			get_arg_len(char *str);
 bool		is_char_real(char c, bool is_escaped, char current_lit);
 bool		is_arg_ended(char c, bool is_escaped, char current_lit);
 void		do_the_thing(char c, bool is_escaped, char *current_lit);
-void		close_pipes(int fd_pipe[2], int fd[2]);
+void		close_pipes(int fd[2], int fd2[2]);
+int			create_children(char *exec, char **env, t_pipe_pair *pipe_pair,
+				int extra_close[2]);
+int			first_children(char **argv, char **env, int io_files[2],
+				int fd_pipe[0]);
+void		switch_close_pipes(int fd1[2], int fd2[2]);
+int			parent(pid_t pid);
+void		children(char **exec, char **env, t_pipe_pair *pipe_pair,
+				int extra_close[2]);
 int			null_error(char **args);
 
 #endif

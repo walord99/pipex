@@ -6,11 +6,11 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 17:45:32 by bplante           #+#    #+#             */
-/*   Updated: 2023/12/03 17:28:20 by bplante          ###   ########.fr       */
+/*   Updated: 2023/12/03 17:28:46 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 int			check_file(char *file, int io);
 
@@ -72,9 +72,13 @@ int	check_io_files(char *in, char *out, int fd[2])
 	return (0);
 }
 
-void	close_and_free(int fd_pipe[2], t_pipe_pair *pipe_paire)
+void	close_pipes(int fd_pipe[2], int fd[2])
 {
-	free(pipe_paire);
+	if (fd)
+	{
+		close(fd[1]);
+		close(fd[0]);
+	}
 	close(fd_pipe[0]);
 	close(fd_pipe[1]);
 }
