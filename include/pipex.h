@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bplante/Walord <benplante99@gmail.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:57:14 by bplante           #+#    #+#             */
-/*   Updated: 2023/11/25 13:56:31 by bplante          ###   ########.fr       */
+/*   Updated: 2023/12/11 03:42:28 by bplante/Wal      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,36 +16,35 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <libft.h>
-# include <stdarg.h>
 # include <stdio.h>
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define IN_FILE 0
-# define OUT_OVER 1
-# define OUT_APPEND 2
+# define READ 0
+# define WRITE 1
+# define NOT_PIPE -2
 
-typedef struct s_pipe_pair
+typedef struct s_pipes_tab
 {
-	int		read[2];
-	int		write[2];
-}			t_pipe_pair;
+	int	len;
+	int	*pipes;
+}		t_pipe_tab;
 
-char		**split_args(char *args);
-char		*get_path(char **env, char **exec);
-int			dup_close_pipes(t_pipe_pair *pipe_pair, int extra_close[2]);
-int			check_io_files(char *in, char *out, int fd[2]);
-t_pipe_pair	*create_pipe_pair(int read0, int read1, int write0, int write1);
-void		close_and_free(int fd_pipe[2], t_pipe_pair *pipe_paire);
-int			check_exec(char **exec, char **env);
-char		*find_arg_end(char *str);
-char		*skip_spaces(char *str);
-int			get_arg_len(char *str);
-bool		is_char_real(char c, bool is_escaped, char current_lit);
-bool		is_arg_ended(char c, bool is_escaped, char current_lit);
-void		do_the_thing(char c, bool is_escaped, char *current_lit);
-void		close_pipes(int fd_pipe[2], int fd[2]);
-int			null_error(char **args);
+char	**split_args(char *args);
+char	*skip_spaces(char *str);
+char	*find_arg_end(char *str);
+int		get_arg_len(char *str);
+
+void	close_all_pipes(t_pipe_tab *pipe_pair);
+int		create_pipes_tab(t_pipe_tab *pipe_tab, int argc, char **argv);
+int		generate_pipes(t_pipe_tab *pipes_tab);
+void	close_unused_pipes(t_pipe_tab *pipe_tab, int pos);
+
+bool	is_arg_ended(char c, bool is_escaped, char current_lit);
+void	do_the_thing(char c, bool is_escaped, char *current_lit);
+bool	is_char_real(char c, bool is_escaped, char current_lit);
+
+int		check_exec(char **exec, char **env);
 
 #endif
