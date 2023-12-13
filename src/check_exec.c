@@ -6,7 +6,7 @@
 /*   By: bplante/Walord <benplante99@gmail.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 02:34:20 by bplante/Wal       #+#    #+#             */
-/*   Updated: 2023/12/11 04:27:23 by bplante/Wal      ###   ########.fr       */
+/*   Updated: 2023/12/13 02:11:49 by bplante/Wal      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ int	check_exec(char **exec, char **env)
 	char	*path;
 	char	*temp;
 
+	if (!exec)
+	{
+		ft_printf_fd("pipex: permission denied: \n", 2);
+		return (1);
+	}
 	if (ft_strchr(exec[0], '/'))
 		return (relative(exec));
 	else
