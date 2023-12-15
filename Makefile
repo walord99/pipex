@@ -50,4 +50,4 @@ valgrind:
 test:
 	gcc $(INCLUDES) test.c src/split_args.c -L$(LIBFT_DIR) -lft -g -o test
 
-.PHONY: all, clean, fclean, re, test
+.PHONY: all clean fclean re test valgrind
