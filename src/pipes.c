@@ -6,7 +6,7 @@
 /*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 02:23:11 by bplante/Wal       #+#    #+#             */
-/*   Updated: 2023/12/15 15:55:38 by bplante          ###   ########.fr       */
+/*   Updated: 2023/12/18 14:59:05 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,12 @@ void	close_all_pipes(t_pipe_tab *pipe_tab)
 
 int	create_pipes_tab(t_pipe_tab *pipe_tab, int argc, char **argv)
 {
-	pipe_tab->pipes = ft_calloc((argc - 2) * 2 + 1, sizeof(int));
-	pipe_tab->len = argc - 2;
+	allocate_pipe_tab(pipe_tab, argc - 2);
+	if (generate_pipes(pipe_tab) == -1)
+	{
+		free(pipe_tab->pipes);
+		return (2);
+	}
 	pipe_tab->pipes[0 + READ] = open(argv[1], O_RDONLY);
 	if (pipe_tab->pipes[0 + READ] == -1)
 	{
@@ -38,12 +42,14 @@ int	create_pipes_tab(t_pipe_tab *pipe_tab, int argc, char **argv)
 		ft_printf_fd("pipex: %s: %s\n", 2, argv[1], strerror(errno));
 	}
 	pipe_tab->pipes[0 + WRITE] = NOT_PIPE;
+	pipe_tab->pipes[(pipe_tab->len - 1) * 2 + READ] = -2;
 	pipe_tab->pipes[(pipe_tab->len - 1) * 2 + WRITE] = open(argv[argc - 1],
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	pipe_tab->pipes[(pipe_tab->len - 1) * 2 + READ] = -2;
-	if (generate_pipes(pipe_tab) == -1)
+	if (pipe_tab->pipes[(pipe_tab->len - 1) * 2 + WRITE] == -1)
 	{
-		free(pipe_tab->pipes);
+		pipe_tab->pipes[(pipe_tab->len - 1) * 2 + WRITE] = open("/dev/null",
+				O_WRONLY);
+		ft_printf_fd("pipex: %s: %s\n", 2, argv[argc - 1], strerror(errno));
 		return (1);
 	}
 	return (0);

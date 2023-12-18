@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bplante/Walord <benplante99@gmail.com>     +#+  +:+       +#+        */
+/*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 02:34:20 by bplante/Wal       #+#    #+#             */
-/*   Updated: 2023/12/13 02:11:49 by bplante/Wal      ###   ########.fr       */
+/*   Updated: 2023/12/18 14:44:01 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ int	relative(char **exec)
 	if (access(exec[0], X_OK) != 0)
 	{
 		ft_printf_fd("pipex: %s: %s\n", 2, strerror(errno), exec[0]);
-		return (-1);
+		if (access(exec[0], F_OK) != 0)
+			return (126);
+		return (127);
 	}
 	return (0);
 }
@@ -27,13 +29,13 @@ int	env_path(char **exec, char *cmd)
 	if (exec[0] && access(exec[0], X_OK) != 0)
 	{
 		ft_printf_fd("pipex: %s: %s\n", 2, strerror(errno), exec[0]);
-		return (1);
+		return (126);
 	}
 	else if (!exec[0])
 	{
 		ft_printf_fd("pipex: command not found: %s\n", 2, cmd);
 		free(cmd);
-		return (1);
+		return (127);
 	}
 	return (0);
 }
@@ -69,7 +71,7 @@ int	check_exec(char **exec, char **env)
 	if (!exec)
 	{
 		ft_printf_fd("pipex: permission denied: \n", 2);
-		return (1);
+		return (126);
 	}
 	if (ft_strchr(exec[0], '/'))
 		return (relative(exec));

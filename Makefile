@@ -1,6 +1,7 @@
 FILES			= 	main.c \
 					pipes.c \
 					check_exec.c \
+					constructor.c \
 					split_args/split_args.c \
 					split_args/split_args_finders.c 
 

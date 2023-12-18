@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bplante/Walord <benplante99@gmail.com>     +#+  +:+       +#+        */
+/*   By: bplante <bplante@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 12:57:14 by bplante           #+#    #+#             */
-/*   Updated: 2023/12/11 03:42:28 by bplante/Wal      ###   ########.fr       */
+/*   Updated: 2023/12/18 14:57:08 by bplante          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,7 @@ void	do_the_thing(char c, bool is_escaped, char *current_lit);
 bool	is_char_real(char c, bool is_escaped, char current_lit);
 
 int		check_exec(char **exec, char **env);
+
+void	allocate_pipe_tab(t_pipe_tab *pipe_tab, int size);
 
 #endif
